@@ -173,7 +173,7 @@ interface Region {
               code: localityCode,
               postcode: postcode,
               districtId: district.id,
-              boundary: locality.boundary ? JSON.stringify(locality.boundary) : Prisma.JsonNull,
+              boundary: locality.boundary ? JSON.stringify(locality.boundary) : undefined,
             },
           });
   
