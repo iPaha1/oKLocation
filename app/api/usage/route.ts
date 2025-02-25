@@ -22,7 +22,10 @@ export async function GET() {
       }
     })
 
-    const keyIds = activeKeys.map(key => key.id as string)
+    // const keyIds = activeKeys.map(key => key.id as string)
+
+    const keyIds = activeKeys.map((key: { id: string }) => key.id)
+
 
     // Get API requests for the last 30 days
     const thirtyDaysAgo = new Date()
