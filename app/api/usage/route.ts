@@ -43,7 +43,9 @@ export async function GET() {
     })
 
     // Group requests by day
-    const usage = requests.reduce((acc: Record<string, number>, request) => {
+    const usage = requests.reduce((acc: Record<string, number>, request: { createdAt: Date }) => {
+
+    // const usage = requests.reduce((acc: Record<string, number>, request) => {
       const date = request.createdAt.toISOString().split('T')[0]
       acc[date] = (acc[date] || 0) + 1
       return acc
