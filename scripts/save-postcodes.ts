@@ -5,7 +5,7 @@
 
 
 // import { generateGhanaPostcodes } from '@/lib/generate-post-codes';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 
 // import { GHANA_REGIONS_DATA } from '@/data';
@@ -610,7 +610,7 @@ const prisma = new PrismaClient({
     // Process districts in chunks
     const districtChunks = chunkArray(region.districts, 5);
     for (const districtChunk of districtChunks) {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         for (const district of districtChunk) {
           console.log(`Processing district: ${district.name}`);
           

@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import localitiesData from '../lib/ghana-post/data/localities/one/localities.json';
 
 
