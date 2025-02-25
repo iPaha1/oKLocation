@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  secret    String
+  userId    String
+  active    Boolean  @default(true)
+  requests  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastUsed  DateTime?
+
+  // Tracking API usage
+  dailyRequests   Int @default(0)
+  monthlyRequests Int @default(0)
+  
+  // Rate limiting
+  rateLimitQuota Int @default(100) // requests per day
+  
+  @@index([userId])
+  @@index([key])
+}
+
+model LocationCache {
+  id         String   @id @default(cuid())
+  gpsName    String   @unique
+  latitude   Float
+  longitude  Float
+  region     String
+  regionCode String?
+  district   String
+  districtCode String?
+  area       String
+  postCode   String
+  street     String?
+  placeName  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([gpsName])
+  @@index([latitude, longitude])
+}
+
+model ApiRequest {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  endpoint  String
+  status    Int
+  duration  Int
+  createdAt DateTime @default(now())
+  
+  @@index([apiKeyId])
+  @@index([createdAt])
+}
+
+
+model SavedLocation {
+  id         String   @id @default(cuid())
+  latitude   Float
+  longitude  Float
+  districtCode String?
+  regionCode String?
+  address    String?  // Google Maps formatted address
+  digitalAddress String // OK Location digital address code
+  district   String?
+  region     String?
+  postCode   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([latitude, longitude])
+}
+
+
+// schema.prisma
+
+model PostcodeRegion {
+  id        String   @id @default(cuid())
+  code      String   @unique // e.g., "GA"
+  name      String   // e.g., "GREATER ACCRA"
+  districts PostcodeDistrict[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+}
+
+model PostcodeDistrict {
+  id        String   @id @default(cuid())
+  code      String   // e.g., "01"
+  name      String   // e.g., "Accra Metropolitan"
+  postcode  String   // e.g., "GA 0100"
+  region    PostcodeRegion @relation(fields: [regionId], references: [id])
+  regionId  String
+  localities PostcodeLocality[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([regionId, code])
+  @@index([postcode])
+}
+
+model PostcodeLocality {
+  id          String   @id @default(cuid())
+  code        String   // e.g., "01"
+  name        String   // e.g., "Osu"
+  type        String   // e.g., "suburb"
+  postcode    String   // e.g., "GA 0101"
+  district    PostcodeDistrict @relation(fields: [districtId], references: [id])
+  districtId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([districtId, code])
+  @@index([postcode])
+}
+
+// Add this to track the generation and updates of postcodes
+model PostcodeMetadata {
+  id             String   @id @default(cuid())
+  lastGenerated  DateTime
+  totalRegions   Int
+  totalDistricts Int
+  totalLocalities Int
+  version        Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+
+
+
+// new models
+
+model Region {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique  // e.g. "01, 02, ..."
+  districts District[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+}
+
+model District {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   // e.g. "01, 02, ..."
+  regionId  String
+  region    Region   @relation(fields: [regionId], references: [id])
+  localities Locality[]
+  boundary    Json?    // GeoJSON boundary data
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@index([regionId])
+}
+
+model Locality {
+  id          String   @id @default(cuid())
+  code        String?   // e.g. "01, 02, ..."
+  postcode    String?   // e.g., "GA 0101"
+  name        String
+  type        String   // city, town, suburb, village, neighborhood
+  districtId  String
+  district    District @relation(fields: [districtId], references: [id])
+  boundary    Json?    // GeoJSON boundary data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([districtId])
+}

@@ -1,0 +1,22 @@
+// scripts/tsconfig.json
+{
+    "compilerOptions": {
+      "target": "ES2018",
+      "module": "commonjs",
+      "lib": ["es2018", "dom"],
+      "outDir": "dist",
+      "rootDir": ".",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "moduleResolution": "node",
+      "baseUrl": "..",
+      "paths": {
+        "@/*": ["./*"]
+      }
+    },
+    "include": ["./**/*"],
+    "exclude": ["node_modules"]
+  }
