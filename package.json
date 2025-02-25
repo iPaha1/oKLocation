@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "process-osm": "ts-node -P ./scripts/tsconfig.json scripts/process-osm-data.ts",
     "process-localities": "ts-node scripts/process-localities-data.ts",
     "process-localities-plus-boundaries": "ts-node scripts/process-localities-plus-boundaries.ts",
