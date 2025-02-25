@@ -6,7 +6,8 @@ import OpenStreetGetLocationByCoordinates from "./check-location-components/chec
 // import { GetPostCodeFromDatabase } from "@/lib/get-postcode-from-database";
 
 
-export default async function GetLocationByCoordinatesPage(): Promise<JSX.Element> {
+// export default async function GetLocationByCoordinatesPage(): Promise<JSX.Element> {
+const GetLocationByCoordinatesPage = async () => {
 
   // Generate all postcodes
 // const postcodes = generateGhanaPostcodes();
@@ -35,3 +36,5 @@ export default async function GetLocationByCoordinatesPage(): Promise<JSX.Elemen
     </div>
   )
 }
+
+export default GetLocationByCoordinatesPage;
