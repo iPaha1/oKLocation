@@ -1,7 +1,7 @@
 // lib/ghana-post/services/db-service.ts
 
 import { generateGhanaPostcodes } from '@/lib/generate-post-codes';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 
 const prisma = new PrismaClient();
@@ -12,7 +12,7 @@ export async function savePostcodesToDatabase() {
     const postcodeData = generateGhanaPostcodes();
 
     // Use a transaction to ensure data consistency
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // First, clear existing data
       console.log('Clearing existing data...');
       await tx.postcodeLocality.deleteMany();
