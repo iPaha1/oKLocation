@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
+    "postinstall": "npx prisma generate",
     "process-osm": "ts-node -P ./scripts/tsconfig.json scripts/process-osm-data.ts",
     "process-localities": "ts-node scripts/process-localities-data.ts",
     "process-localities-plus-boundaries": "ts-node scripts/process-localities-plus-boundaries.ts",
@@ -95,6 +95,7 @@
     "node-fetch": "^2.7.0",
     "osmtogeojson": "^2.2.12",
     "postcss": "^8",
+    "prisma": "^6.4.1",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
