@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "oKLocation",
-  description: "Get location where in Ghana",
+  description: "Get location any where in Ghana",
 };
 
 export default function RootLayout({

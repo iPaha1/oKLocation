@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import localitiesData from '../lib/ghana-post/data/localities/one/localities.json';
+import localitiesData from '../lib/ghana-post/data/localities/one/two/localities.json';
 
 
 interface Region {
