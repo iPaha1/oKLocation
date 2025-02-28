@@ -3,7 +3,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Copy, MapPin, Clock } from "lucide-react";
+import { Copy, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -128,10 +128,10 @@ export default function AddressDetails({ location }: AddressDetailsProps) {
             </div>
 
             {/* Last Updated */}
-            <div className="flex items-center pt-2 text-xs text-muted-foreground">
+            {/* <div className="flex items-center pt-2 text-xs text-muted-foreground">
               <Clock className="h-3 w-3 mr-1" />
               <span>Last Updated: {new Date(location.updatedAt).toLocaleString()}</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </CardContent>
