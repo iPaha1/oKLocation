@@ -244,7 +244,7 @@ const OpenStreetGenerateAddress = () => {
 
             <div className="flex items-center justify-between">
               <span className="font-bold">Complete Home Address:</span>
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="text-sm"
@@ -269,7 +269,7 @@ const OpenStreetGenerateAddress = () => {
               >
                 <Copy className="h-4 w-4 mr-1" />
                 Copy Address
-              </Button>
+              </Button> */}
             </div>
 
             <div className="mt-6">
