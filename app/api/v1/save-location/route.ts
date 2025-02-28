@@ -7,6 +7,7 @@ import { findDistrictAndRegionCodes } from '@/lib/ghana-post/utils/find-district
 export async function POST(req: Request) {
     try {
       const body = await req.json();
+      console.log('Request body:', body);
       
       // Validate the incoming data
       if (!body || !body.coords || !body.locationDetails) {
@@ -88,6 +89,7 @@ export async function POST(req: Request) {
           regionCode: codes?.regionCode || null,
           district: locationDetails.district || null,
           region: locationDetails.region || null,
+          postCode: locationDetails.postalCode || null
         }
       });
   

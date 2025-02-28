@@ -176,7 +176,8 @@ const OpenStreetGenerateAddress = () => {
           locationDetails: {
             address: locationInfo.locationDetails.digitalAddress,
             district: locationInfo.locationDetails.district || null,
-            region: locationInfo.locationDetails.region || null
+            region: locationInfo.locationDetails.region || null,
+            postalCode: locationInfo.locationDetails.postalCode || null, // Add the postcode
           }
         }),
       });

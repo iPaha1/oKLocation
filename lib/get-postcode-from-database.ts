@@ -21,6 +21,7 @@ interface LocalityResponse {
 
 interface DistrictResponse {
   type: 'district';
+  locality?: string;  // Changed from required to optional
   district: string;
   region: string;
   metadata: {
@@ -39,6 +40,13 @@ interface RegionResponse {
 
 // Union type of all possible responses
 type PostcodeResponse = LocalityResponse | DistrictResponse | RegionResponse;
+
+ // Add this type guard function
+export function isLocalityResponse(response: PostcodeResponse): response is LocalityResponse {
+  return response.type === 'locality';
+}
+console.log(isLocalityResponse({ type: 'locality', postcode: '12345', locality: 'Accra', district: 'Accra', region: 'Greater Accra', metadata: { localityType: 'Municipal', localityCode: '123', districtCode: '456', regionCode: '789' } }));  // true
+console.log(isLocalityResponse({ type: 'district', district: 'Accra', region: 'Greater Accra', metadata: { districtCode: '456', regionCode: '789' } }));  // false
 
 // Helper function to clean administrative names
 function cleanAdministrativeName(name: string | undefined): string | undefined {
@@ -203,6 +211,7 @@ export const getPostCodeFromDB = async (params: {
 
 // Optional: Export the cleaning function if needed elsewhere
 export const cleanLocationName = cleanAdministrativeName;
+
 
 
 

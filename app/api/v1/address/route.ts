@@ -5,7 +5,7 @@ import { validateApiKey } from '@/lib/api-validate';
 import { trackApiRequest } from '@/lib/api-tracking';
 import { generateGPSAddress } from '@/lib/ghana-post/address-generator';
 import { cacheLocation, getCachedLocation } from '@/lib/local-cache';
-import { getPostCodeFromDB } from '@/lib/get-postcode-from-database';
+import { getPostCodeFromDB, isLocalityResponse } from '@/lib/get-postcode-from-database';
 import { OpenStreeGenerateGPSAddress } from '@/lib/ghana-post/address-generator-with-open-street';
 
 
@@ -30,6 +30,7 @@ interface GhanaGPSAddress {
   districtCode?: string;
   region: string;
   regionCode?: string;
+  postcode?: string;
   coordinates: {
     latitude: number;
     longitude: number;
@@ -165,6 +166,7 @@ export async function GET(request: NextRequest) {
         districtCode: cachedLocation.districtCode || undefined,
         region: cachedLocation.region,
         regionCode: cachedLocation.regionCode || undefined,
+        postcode: cachedLocation.postCode || undefined,
         coordinates: {
           latitude: cachedLocation.latitude,
           longitude: cachedLocation.longitude
@@ -213,6 +215,11 @@ export async function GET(request: NextRequest) {
 
     console.log("THIS IS THE POST CODE I AM GETTING in the address: ", postCodeFromDB);
 
+
+  // Use the type guard to check if postCodeFromDB is a LocalityResponse
+const postcode = postCodeFromDB && isLocalityResponse(postCodeFromDB) ? postCodeFromDB.postcode : null;
+console.log('Postcode:', postcode);
+
     // Cache the result with the cleaned district name
     await cacheLocation({
       gpsName: address.address, // Use the generated GPS address as the key
@@ -223,7 +230,8 @@ export async function GET(request: NextRequest) {
       district: cleanedDistrict, // Store the cleaned district name
       districtCode: '', // We'll update this if needed
       area: '', // We'll update this if needed
-      postCode: address.address.split('-')[0], // District code becomes post code
+      // postCode: address.address.split('-')[0], // District code becomes post code
+      postCode: postcode || '', // Use the postcode from DB
       street: undefined,
       placeName: undefined
     });
@@ -236,14 +244,30 @@ export async function GET(request: NextRequest) {
       duration
     });
 
-    return NextResponse.json(address, {
-      headers: {
-        'X-RateLimit-Limit': validation.rateLimitQuota?.toString() || '1000',
-        'X-RateLimit-Remaining': validation.rateLimitQuota && validation.dailyRequests 
-          ? (validation.rateLimitQuota - validation.dailyRequests).toString()
-          : '0'
+    // return NextResponse.json(address, {
+    //   headers: {
+    //     'X-RateLimit-Limit': validation.rateLimitQuota?.toString() || '1000',
+    //     'X-RateLimit-Remaining': validation.rateLimitQuota && validation.dailyRequests 
+    //       ? (validation.rateLimitQuota - validation.dailyRequests).toString()
+    //       : '0'
+    //   }
+    // });
+
+    return NextResponse.json(
+      {
+        ...address, // Include the original address fields
+        postcode: postcode, // Add the postcode to the response
+      },
+      {
+        headers: {
+          'X-RateLimit-Limit': validation.rateLimitQuota?.toString() || '1000',
+          'X-RateLimit-Remaining':
+            validation.rateLimitQuota && validation.dailyRequests
+              ? (validation.rateLimitQuota - validation.dailyRequests).toString()
+              : '0',
+        },
       }
-    });
+    );
   } catch (error) {
     console.error('Error generating address:', error);
     const duration = Date.now() - startTime;
@@ -264,6 +288,10 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+
+
+
 
 // POST endpoint for batch processing
 export async function POST(request: NextRequest) {
